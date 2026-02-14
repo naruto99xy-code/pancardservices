@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import ApplyPage from "./pages/ApplyPage";
 import TrackPage from "./pages/TrackPage";
 import ContactPage from "./pages/ContactPage";
+import LoginPage from "./pages/LoginPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import OperatorLogin from "./pages/OperatorLogin";
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/apply" element={<ApplyPage />} />
             <Route path="/track" element={<TrackPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsConditions />} />
             <Route path="/refund" element={<RefundPolicy />} />
@@ -49,7 +51,14 @@ const App = () => (
               }
             />
             <Route path="/operator" element={<OperatorLogin />} />
-            <Route path="/operator/dashboard" element={<OperatorDashboard />} />
+            <Route
+              path="/operator/dashboard"
+              element={
+                <ProtectedRoute>
+                  <OperatorDashboard />
+                </ProtectedRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
