@@ -339,7 +339,16 @@ serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const { application_id } = await req.json();
+    // Support both GET (query param) and POST (JSON body)
+    let application_id: string | null = null;
+    const url = new URL(req.url);
+    application_id = url.searchParams.get("application_id");
+    if (!application_id && req.method === "POST") {
+      try {
+        const body = await req.json();
+        application_id = body.application_id;
+      } catch (_) {}
+    }
     if (!application_id) {
       return new Response(JSON.stringify({ error: "application_id required" }), {
         status: 400,
