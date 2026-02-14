@@ -1,0 +1,228 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+@layer base {
+  :root {
+    /* Backgrounds */
+    --background: 216 25% 97%;
+    --foreground: 213 53% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 213 53% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 53% 14%;
+
+    /* Primary: Deep Navy Blue #0B3C5D */
+    --primary: 203 78% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Government Blue #1F4FD8 */
+    --secondary: 225 75% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted */
+    --muted: 216 20% 95%;
+    --muted-foreground: 216 14% 52%;
+
+    /* Accent: India Green #138808 */
+    --accent: 113 85% 28%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Saffron: #FF9933 — highlight only */
+    --saffron: 30 100% 60%;
+    --saffron-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 216 18% 89%;
+    --input: 216 18% 89%;
+    --ring: 225 75% 48%;
+
+    --radius: 0.625rem;
+
+    /* Semantic */
+    --success: 113 85% 28%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 30 100% 60%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 225 75% 48%;
+    --info-foreground: 0 0% 100%;
+
+    /* Named palette tokens */
+    --navy: 203 78% 20%;
+    --navy-light: 203 60% 30%;
+    --navy-dark: 203 85% 12%;
+
+    --gov-blue: 225 75% 48%;
+    --gov-blue-light: 225 65% 58%;
+
+    /* Heading text: #0A2540 */
+    --heading: 210 64% 14%;
+    /* Body text: #4A5568 */
+    --body: 215 16% 35%;
+
+    /* Sidebar */
+    --sidebar-background: 203 78% 14%;
+    --sidebar-foreground: 216 20% 92%;
+    --sidebar-primary: 225 75% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 203 60% 24%;
+    --sidebar-accent-foreground: 216 20% 96%;
+    --sidebar-border: 203 55% 22%;
+    --sidebar-ring: 225 75% 48%;
+
+    /* Gradients */
+    --gradient-navy: linear-gradient(135deg, hsl(203 85% 12%) 0%, hsl(203 78% 20%) 50%, hsl(203 60% 28%) 100%);
+    --gradient-gov-blue: linear-gradient(135deg, hsl(225 75% 48%), hsl(225 65% 56%));
+    --gradient-saffron: linear-gradient(135deg, hsl(30 100% 60%), hsl(24 95% 52%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(216 25% 98%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(216 25% 97%) 0%, hsl(216 20% 99%) 100%);
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px hsl(203 78% 20% / 0.04);
+    --shadow-sm: 0 1px 4px hsl(203 78% 20% / 0.06), 0 1px 2px hsl(203 78% 20% / 0.04);
+    --shadow-md: 0 4px 16px hsl(203 78% 20% / 0.08), 0 1px 4px hsl(203 78% 20% / 0.04);
+    --shadow-lg: 0 10px 40px hsl(203 78% 20% / 0.1), 0 2px 8px hsl(203 78% 20% / 0.04);
+    --shadow-saffron: 0 4px 20px hsl(30 100% 60% / 0.2);
+    --shadow-lift: 0 8px 30px hsl(203 78% 20% / 0.12), 0 2px 8px hsl(203 78% 20% / 0.06);
+    --shadow-blue: 0 4px 20px hsl(225 75% 48% / 0.25);
+  }
+
+  .dark {
+    --background: 210 50% 6%;
+    --foreground: 216 20% 95%;
+
+    --card: 210 45% 10%;
+    --card-foreground: 216 20% 95%;
+
+    --popover: 210 45% 10%;
+    --popover-foreground: 216 20% 95%;
+
+    --primary: 203 78% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 225 75% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 30% 14%;
+    --muted-foreground: 215 12% 55%;
+
+    --accent: 113 85% 28%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 25% 18%;
+    --input: 210 25% 18%;
+    --ring: 225 75% 48%;
+
+    --heading: 0 0% 95%;
+    --body: 215 12% 65%;
+
+    --sidebar-background: 210 50% 6%;
+    --sidebar-foreground: 216 20% 90%;
+    --sidebar-primary: 225 75% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 35% 14%;
+    --sidebar-accent-foreground: 216 20% 95%;
+    --sidebar-border: 210 25% 16%;
+    --sidebar-ring: 225 75% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-body font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    color: hsl(var(--heading));
+  }
+}
+
+@layer utilities {
+  .gradient-navy {
+    background: var(--gradient-navy);
+  }
+
+  .gradient-gov-blue {
+    background: var(--gradient-gov-blue);
+  }
+
+  .gradient-saffron {
+    background: var(--gradient-saffron);
+  }
+
+  .gradient-primary {
+    background: var(--gradient-navy);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-gov-blue);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-navy);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-subtle {
+    background: var(--gradient-subtle);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-accent-glow {
+    box-shadow: var(--shadow-blue);
+  }
+
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
+  }
+
+  .shadow-saffron-glow {
+    box-shadow: var(--shadow-saffron);
+  }
+
+  .text-heading {
+    color: hsl(var(--heading));
+  }
+
+  .text-body {
+    color: hsl(var(--body));
+  }
+
+  .text-gradient-navy {
+    background: var(--gradient-navy);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
