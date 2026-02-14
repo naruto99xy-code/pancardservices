@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, Phone, ChevronRight } from "lucide-react";
+import { Menu, X, Phone, ChevronRight, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, isAdmin, signOut, isLoading } = useAuth();
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -16,6 +18,11 @@ const Header = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    await signOut();
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50">
@@ -27,18 +34,39 @@ const Header = () => {
             Helpline: 7400408812
           </span>
           <div className="flex items-center gap-4">
-            <Link
-              to="/operator"
-              className="hover:text-primary-foreground transition-colors text-primary-foreground/50"
-            >
-              Operator Portal
-            </Link>
-            <Link
-              to="/admin"
-              className="hover:text-primary-foreground transition-colors text-primary-foreground/50"
-            >
-              Admin Portal
-            </Link>
+            {user && !isLoading && (
+              <Link
+                to="/operator"
+                className="hover:text-primary-foreground transition-colors text-primary-foreground/50"
+              >
+                Operator Portal
+              </Link>
+            )}
+            {isAdmin && !isLoading && (
+              <Link
+                to="/admin"
+                className="hover:text-primary-foreground transition-colors text-primary-foreground/50"
+              >
+                Admin Portal
+              </Link>
+            )}
+            {!user && !isLoading && (
+              <Link
+                to="/login"
+                className="hover:text-primary-foreground transition-colors text-primary-foreground/50"
+              >
+                Login
+              </Link>
+            )}
+            {user && !isLoading && (
+              <button
+                onClick={handleLogout}
+                className="hover:text-primary-foreground transition-colors text-primary-foreground/50 flex items-center gap-1"
+              >
+                <LogOut className="h-3 w-3" />
+                Logout
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -112,6 +140,18 @@ const Header = () => {
                   </Button>
                 </Link>
               ))}
+              {!user && !isLoading && (
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <LogIn className="h-4 w-4 mr-2" /> Login
+                  </Button>
+                </Link>
+              )}
+              {user && !isLoading && (
+                <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" /> Logout
+                </Button>
+              )}
               <Link to="/apply" onClick={() => setIsMobileMenuOpen(false)} className="mt-2">
                 <Button variant="default" className="w-full">
                   Get Started
