@@ -36,7 +36,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import PdfViewer from "@/components/PdfViewer";
+
 
 const serviceLabels: Record<string, string> = {
   new: "New PAN",
@@ -88,7 +88,7 @@ const AdminDashboard = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [documents, setDocuments] = useState<any[]>([]);
-  const [pdfViewUrl, setPdfViewUrl] = useState<string | null>(null);
+  
 
   const fetchApplications = async () => {
     const { data, error } = await supabase
@@ -179,43 +179,18 @@ const AdminDashboard = () => {
     }
   };
 
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState<string | null>(null);
-
-  const handleViewApp = async (app: Application) => {
-    setIsGeneratingPdf(app.id);
-    try {
-      const { data, error } = await supabase.functions.invoke("generate-pdf", {
-        body: { application_id: app.id },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        setPdfViewUrl(data.url);
-        fetchApplications();
-      } else {
-        throw new Error("No PDF URL returned");
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to generate PDF");
-    } finally {
-      setIsGeneratingPdf(null);
-    }
+  const getPdfUrl = (applicationId: string) => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    return `${supabaseUrl}/functions/v1/generate-pdf?application_id=${applicationId}&apikey=${anonKey}`;
   };
 
-  const handleGeneratePdf = async (appId: string) => {
-    toast.info("Generating summary...");
-    try {
-      const { data, error } = await supabase.functions.invoke("generate-pdf", {
-        body: { application_id: appId },
-      });
-      if (error) throw error;
-      toast.success("Summary generated!");
-      if (data?.url) {
-        setPdfViewUrl(data.url);
-      }
-      fetchApplications();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to generate summary");
-    }
+  const handleViewApp = (app: Application) => {
+    window.open(getPdfUrl(app.id), "_blank");
+  };
+
+  const handleDownloadPdf = (appId: string) => {
+    window.open(getPdfUrl(appId), "_blank");
   };
 
   if (isLoading) {
@@ -362,10 +337,10 @@ const AdminDashboard = () => {
                         </Select>
                       </td>
                       <td className="p-4 text-right space-x-1">
-                        <Button variant="ghost" size="sm" onClick={() => handleViewApp(app)} disabled={isGeneratingPdf === app.id}>
-                          {isGeneratingPdf === app.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+                        <Button variant="ghost" size="sm" onClick={() => handleViewApp(app)}>
+                          <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => handleGeneratePdf(app.id)} title="Generate Summary">
+                        <Button variant="ghost" size="sm" onClick={() => handleDownloadPdf(app.id)} title="Download PDF">
                           <Download className="h-4 w-4" />
                         </Button>
                       </td>
@@ -397,8 +372,8 @@ const AdminDashboard = () => {
                     <span>{new Date(app.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleViewApp(app)} disabled={isGeneratingPdf === app.id}>
-                      {isGeneratingPdf === app.id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Eye className="h-4 w-4 mr-1" />} View
+                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleViewApp(app)}>
+                      <Eye className="h-4 w-4 mr-1" /> View
                     </Button>
                     <Select value={app.status} onValueChange={(val) => handleStatusChange(app.id, val)}>
                       <SelectTrigger className="flex-1 h-9">
@@ -497,7 +472,7 @@ const AdminDashboard = () => {
           )}
         </DialogContent>
       </Dialog>
-      <PdfViewer url={pdfViewUrl} open={!!pdfViewUrl} onOpenChange={(open) => !open && setPdfViewUrl(null)} />
+      
     </div>
   );
 };
