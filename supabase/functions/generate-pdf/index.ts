@@ -15,125 +15,149 @@ const corsHeaders = {
 // ============================================================
 const A4W = 595.28;
 const A4H = 841.89;
-const CHAR_W = 12.8;
+// Standard Form 49A character box width ≈ 4.5mm = 12.76pt
+const CHAR_W = 12.76;
 const BLACK = rgb(0, 0, 0);
 
 // ============================================================
 // FORM 49A COORDINATES — Centralized coordinate map
-// All x,y measured from bottom-left of page in PDF points.
+// All x,y measured from bottom-left of page in PDF points (1pt = 1/72 inch).
+// A4 = 595.28 x 841.89 pt
+//
+// NSDL Form 49A standard layout reference:
+// - Left margin: ~42pt  |  Right margin: ~42pt
+// - Character box: 12.76pt wide x 14pt tall
+// - Row-to-row spacing (char boxes): ~16pt
+// - Section gap: ~8-12pt
+// - Photo: 3.5cm x 2.5cm = 99pt x 71pt (portrait: w=71, h=99)
 // ============================================================
 const COORDS = {
   page1: {
-    // Section 1: Title checkboxes
-    title_shri:   { x: 270, y: 671 },
-    title_smt:    { x: 352, y: 671 },
-    title_kumari: { x: 432, y: 671 },
+    // ── AO Code (top section, y ≈ 756) ──
+    // ao_code, ao_type, range_code, ao_number are less commonly filled
 
-    // Section 1: Name character boxes (25 chars each)
-    last_name:   { x: 132, y: 649, maxChars: 25 },
-    first_name:  { x: 132, y: 633, maxChars: 25 },
-    middle_name: { x: 132, y: 617, maxChars: 25 },
+    // ── Section 1: Title checkboxes (y ≈ 718) ──
+    title_shri:   { x: 259, y: 718 },
+    title_smt:    { x: 338, y: 718 },
+    title_kumari: { x: 418, y: 718 },
 
-    // Section 2: PAN print name
-    pan_print_name: { x: 55, y: 585, maxChars: 35 },
+    // ── Section 1: Name character boxes (25 chars each) ──
+    // Row height spacing: ~16pt between rows
+    last_name:   { x: 128, y: 700, maxChars: 25 },
+    first_name:  { x: 128, y: 684, maxChars: 25 },
+    middle_name: { x: 128, y: 668, maxChars: 25 },
 
-    // Section 3: Other name
-    other_name_yes: { x: 374, y: 560 },
-    other_name_no:  { x: 436, y: 560 },
-    other_title_shri:   { x: 270, y: 541 },
-    other_title_smt:    { x: 352, y: 541 },
-    other_title_kumari: { x: 432, y: 541 },
-    other_last_name:   { x: 132, y: 524, maxChars: 25 },
-    other_first_name:  { x: 132, y: 508, maxChars: 25 },
-    other_middle_name: { x: 132, y: 492, maxChars: 25 },
+    // ── Section 2: PAN print name (y ≈ 646) ──
+    pan_print_name: { x: 52, y: 646, maxChars: 36 },
 
-    // Section 4: Gender
-    gender_male:        { x: 340, y: 473 },
-    gender_female:      { x: 418, y: 473 },
-    gender_transgender: { x: 500, y: 473 },
+    // ── Section 3: Other name (y ≈ 624) ──
+    other_name_yes: { x: 370, y: 624 },
+    other_name_no:  { x: 430, y: 624 },
+    other_title_shri:   { x: 259, y: 606 },
+    other_title_smt:    { x: 338, y: 606 },
+    other_title_kumari: { x: 418, y: 606 },
+    other_last_name:   { x: 128, y: 590, maxChars: 25 },
+    other_first_name:  { x: 128, y: 574, maxChars: 25 },
+    other_middle_name: { x: 128, y: 558, maxChars: 25 },
 
-    // Section 5: DOB
-    dob_day:   { x: 68,  y: 441, maxChars: 2 },
-    dob_month: { x: 112, y: 441, maxChars: 2 },
-    dob_year:  { x: 162, y: 441, maxChars: 4 },
+    // ── Section 4: Gender (y ≈ 538) ──
+    gender_male:        { x: 328, y: 538 },
+    gender_female:      { x: 406, y: 538 },
+    gender_transgender: { x: 486, y: 538 },
 
-    // Section 6: Parents
-    single_parent_yes: { x: 56, y: 398 },
-    single_parent_no:  { x: 97, y: 398 },
-    father_last:   { x: 132, y: 367, maxChars: 25 },
-    father_first:  { x: 132, y: 351, maxChars: 25 },
-    father_middle: { x: 132, y: 335, maxChars: 25 },
-    mother_last:   { x: 132, y: 303, maxChars: 25 },
-    mother_first:  { x: 132, y: 287, maxChars: 25 },
-    mother_middle: { x: 132, y: 271, maxChars: 25 },
-    parent_father: { x: 68,  y: 248 },
-    parent_mother: { x: 160, y: 248 },
+    // ── Section 5: Date of Birth (y ≈ 518) ──
+    // DD at x≈65, MM at x≈110, YYYY at x≈158
+    dob_day:   { x: 65,  y: 518, maxChars: 2 },
+    dob_month: { x: 110, y: 518, maxChars: 2 },
+    dob_year:  { x: 158, y: 518, maxChars: 4 },
 
-    // Section 7: Residence Address
-    addr_flat:     { x: 132, y: 202, maxChars: 25 },
-    addr_premises: { x: 132, y: 186, maxChars: 25 },
-    addr_road:     { x: 132, y: 170, maxChars: 25 },
-    addr_area:     { x: 132, y: 154, maxChars: 25 },
-    addr_city:     { x: 132, y: 138, maxChars: 25 },
-    addr_state:    { x: 55,  y: 118 },
-    addr_pincode:  { x: 340, y: 118, maxChars: 6 },
-    addr_country:  { x: 470, y: 118 },
+    // ── Section 6: Single Parent (y ≈ 494) ──
+    single_parent_yes: { x: 54, y: 494 },
+    single_parent_no:  { x: 95, y: 494 },
 
-    // Photo & Signature positions
-    photo_left:  { x: 28, y: A4H - 105, width: 71, height: 99 },
-    photo_right: { x: A4W - 100, y: A4H - 105, width: 71, height: 99 },
+    // ── Section 6: Father's Name (y starts ≈ 470) ──
+    father_last:   { x: 128, y: 470, maxChars: 25 },
+    father_first:  { x: 128, y: 454, maxChars: 25 },
+    father_middle: { x: 128, y: 438, maxChars: 25 },
+
+    // ── Section 6: Mother's Name (y starts ≈ 416) ──
+    mother_last:   { x: 128, y: 416, maxChars: 25 },
+    mother_first:  { x: 128, y: 400, maxChars: 25 },
+    mother_middle: { x: 128, y: 384, maxChars: 25 },
+
+    // ── Parent name on card (y ≈ 364) ──
+    parent_father: { x: 66,  y: 364 },
+    parent_mother: { x: 156, y: 364 },
+
+    // ── Section 7: Residence Address ──
+    addr_flat:     { x: 128, y: 330, maxChars: 25 },
+    addr_premises: { x: 128, y: 314, maxChars: 25 },
+    addr_road:     { x: 128, y: 298, maxChars: 25 },
+    addr_area:     { x: 128, y: 282, maxChars: 25 },
+    addr_city:     { x: 128, y: 266, maxChars: 25 },
+    addr_state:    { x: 52,  y: 246 },
+    addr_pincode:  { x: 335, y: 246, maxChars: 6 },
+    addr_country:  { x: 460, y: 246 },
+
+    // ── Photo positions ──
+    // Left photo: top-left corner of form
+    // Photo size: 71pt wide x 99pt tall (3.5cm x 2.5cm portrait)
+    photo_left:  { x: 30,  y: 735, width: 71, height: 99 },
+    // Right photo: top-right corner
+    photo_right: { x: 494, y: 735, width: 71, height: 99 },
   },
 
   page2: {
-    // Office address
-    office_name:     { x: 132, y: 790, maxChars: 25 },
-    office_flat:     { x: 132, y: 774, maxChars: 25 },
-    office_premises: { x: 132, y: 758, maxChars: 25 },
-    office_road:     { x: 132, y: 742, maxChars: 25 },
-    office_area:     { x: 132, y: 726, maxChars: 25 },
-    office_city:     { x: 132, y: 710, maxChars: 25 },
-    office_state:    { x: 55,  y: 690 },
-    office_pincode:  { x: 340, y: 690, maxChars: 6 },
-    office_country:  { x: 470, y: 690 },
+    // ── Office Address (top of page 2) ──
+    office_name:     { x: 128, y: 792, maxChars: 25 },
+    office_flat:     { x: 128, y: 776, maxChars: 25 },
+    office_premises: { x: 128, y: 760, maxChars: 25 },
+    office_road:     { x: 128, y: 744, maxChars: 25 },
+    office_area:     { x: 128, y: 728, maxChars: 25 },
+    office_city:     { x: 128, y: 712, maxChars: 25 },
+    office_state:    { x: 52,  y: 692 },
+    office_pincode:  { x: 335, y: 692, maxChars: 6 },
+    office_country:  { x: 460, y: 692 },
 
-    // Section 8: Communication address
-    comm_residence: { x: 353, y: 660 },
-    comm_office:    { x: 455, y: 660 },
+    // ── Section 8: Communication address preference ──
+    comm_residence: { x: 348, y: 668 },
+    comm_office:    { x: 448, y: 668 },
 
-    // Section 9: Contact
-    country_code: { x: 100, y: 633, maxChars: 4 },
-    std_code:     { x: 195, y: 633, maxChars: 5 },
-    mobile:       { x: 340, y: 633, maxChars: 10 },
-    email:        { x: 100, y: 610 },
+    // ── Section 9: Contact details ──
+    country_code: { x: 96,  y: 645, maxChars: 4 },
+    std_code:     { x: 190, y: 645, maxChars: 5 },
+    mobile:       { x: 335, y: 645, maxChars: 10 },
+    email:        { x: 96,  y: 625 },
 
-    // Section 10: Status
-    status_individual: { x: 56, y: 565 },
+    // ── Section 10: Applicant Status ──
+    status_individual: { x: 54, y: 590 },
 
-    // Section 12: Aadhaar
-    aadhaar:            { x: 280, y: 490, maxChars: 12 },
-    aadhaar_enrollment: { x: 280, y: 470, maxChars: 28 },
-    aadhaar_name:       { x: 55,  y: 445 },
+    // ── Section 12: Aadhaar ──
+    aadhaar:            { x: 275, y: 520, maxChars: 12 },
+    aadhaar_enrollment: { x: 275, y: 500, maxChars: 28 },
+    aadhaar_name:       { x: 52,  y: 478 },
 
-    // Section 13: Source of Income
-    income_salary:        { x: 56,  y: 370 },
-    income_capital_gains: { x: 540, y: 380 },
-    income_business:      { x: 56,  y: 355 },
-    income_other:         { x: 540, y: 365 },
-    income_house:         { x: 56,  y: 340 },
-    income_no_income:     { x: 540, y: 350 },
+    // ── Section 13: Source of Income checkboxes ──
+    income_salary:        { x: 54,  y: 430 },
+    income_capital_gains: { x: 340, y: 430 },
+    income_business:      { x: 54,  y: 414 },
+    income_other:         { x: 340, y: 414 },
+    income_house:         { x: 54,  y: 398 },
+    income_no_income:     { x: 340, y: 398 },
 
-    // Section 15: Document proofs
-    proof_identity: { x: 200, y: 200 },
-    proof_address:  { x: 200, y: 185 },
-    proof_dob:      { x: 460, y: 200 },
+    // ── Section 15: Document proofs ──
+    proof_identity: { x: 195, y: 330 },
+    proof_address:  { x: 195, y: 314 },
+    proof_dob:      { x: 450, y: 330 },
 
-    // Section 16: Declaration
-    declaration_name:  { x: 65,  y: 155 },
-    declaration_place: { x: 100, y: 125 },
-    declaration_date:  { x: 65,  y: 105 },
+    // ── Section 16: Declaration ──
+    declaration_name:  { x: 62,  y: 245 },
+    declaration_place: { x: 96,  y: 220 },
+    declaration_date:  { x: 62,  y: 198 },
 
-    // Signature position
-    signature: { x: 430, y: 80, width: 120, height: 40 },
+    // ── Signature box ──
+    // Placed in bottom-right declaration area
+    signature: { x: 420, y: 185, width: 130, height: 45 },
   },
 };
 
